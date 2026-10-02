@@ -3,6 +3,7 @@
 Herramienta web para generar paletas de color armónicas, explorar una galería infinita de paletas y guardar las favoritas. JavaScript puro — sin frameworks, sin dependencias, sin paso de compilación.
 
 **Demo en vivo:** https://tu-dominio.netlify.app/demo-generador-paletas.html
+> Al probarlo abriendo `index.html` con doble clic, la pestaña "Explorar" seguirá funcionando igual (es `fetch` normal, no un módulo ES), pero necesitas conexión a internet para ver paletas "en vivo" — sin red, cae automáticamente al generador propio.
 **Más contexto del proyecto:** https://tu-dominio.netlify.app/proyectos/generador-paletas
 
 ![Pestaña Generar](./docs/screenshot-generar.png)
@@ -17,17 +18,18 @@ Herramienta web para generar paletas de color armónicas, explorar una galería 
 - Atajo de teclado: la barra espaciadora regenera los colores no bloqueados.
 
 **Explorar**
-- Galería de scroll infinito que combina una colección curada de paletas reales con generación algorítmica continua — nunca se acaba.
+- Galería de scroll infinito que combina tres fuentes — nunca se acaba: una colección curada de paletas reales, paletas en vivo pedidas a [The Color API](https://www.thecolorapi.com) (pública, sin clave) y generación algorítmica propia cuando la red falla o tarda.
 - Filtros por estilo: cálidas, frías, pastel, oscuras, vivas, tierra.
 - Guardar cualquier paleta con un clic en la estrella.
 
 **General**
 - Paletas guardadas persistentes en `localStorage`, compartidas entre ambas pestañas.
-- Sin backend ni API externa: funciona siempre, sin claves ni límites de peticiones de terceros.
+- Sin backend propio ni clave de API: la única llamada de red es a un servicio público gratuito, y si no responde en 4 segundos (o el visitante está offline) la app genera la paleta por su cuenta sin que se note.
 
 ## Stack técnico
 
-- HTML5 + CSS3 + JavaScript (ES5, sin build)
+- HTML5 + CSS3 + JavaScript moderno (ES2020+: `const`/`let`, funciones flecha, `async`/`await`, desestructuración), sin build ni frameworks
+- `fetch` + `AbortController` para pedir paletas a [The Color API](https://www.thecolorapi.com/docs) con timeout y `Promise.allSettled` para no bloquear el lote si una petición falla
 - Conversión de color HSL → HEX escrita a mano
 - `localStorage` con manejo de errores (try/catch) para navegación privada
 
@@ -45,7 +47,9 @@ python3 -m http.server 8000
 
 ## Por qué está hecho así
 
-Quise demostrar que se puede construir una herramienta pulida y realmente útil sin depender de ningún framework ni servicio externo. La galería "Explorar" podría haber llamado a una API de paletas de terceros, pero eso introduce un punto de fallo (límites de peticiones, caídas del servicio, CORS) en una app que debe funcionar siempre, sin mantenimiento. En su lugar, combina una colección propia de paletas curadas con un generador algorítmico infinito.
+Quise demostrar que se puede construir una herramienta pulida y realmente útil sin depender de un framework ni de un backend propio. La galería "Explorar" sí llama a una API pública de color para traer paletas reales, pero nunca depende de ella al 100 %: agota primero una colección curada (resultados instantáneos y con buen gusto garantizado desde el primer segundo), y si la API no responde a tiempo —sin conexión, caída del servicio, límite de peticiones— cae de forma silenciosa a un generador algorítmico propio basado en rangos HSL por categoría. Así la demo nunca se "rompe" ni se queda esperando a un tercero, pase lo que pase con la red.
+
+La app sigue sin build ni paso de compilación a propósito (`script.js` cargado como `<script>` normal, no como módulo ES): así se puede abrir con doble clic sobre `index.html` sin montar un servidor, algo que no es posible con frameworks como Angular, que bloquean `type="module"` bajo el protocolo `file://` por seguridad del navegador.
 
 ## Autor
 
