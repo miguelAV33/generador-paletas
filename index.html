@@ -948,6 +948,7 @@
   };
 
   const exploreState = {
+    generation: 0,
     tag: 'todas',
     curatedPointer: 0,
     curatedOrder: [],
@@ -1064,20 +1065,32 @@
     if (loadingRow) loadingRow.style.display = visible ? 'block' : 'none';
   };
 
+  // ¿Falta contenido por debajo de la vista? Solo cuenta si la pestaña está
+  // visible (oculta mide 0 px y parecería que siempre falta).
+  const needsMore = () =>
+    exploreScroll.clientHeight > 0 &&
+    exploreScroll.scrollHeight - exploreScroll.scrollTop - exploreScroll.clientHeight < 500;
+
   const loadMoreExplore = async () => {
     if (exploreState.loading) return;
     exploreState.loading = true;
+    const generation = exploreState.generation;
     setLoadingVisible(true);
     try {
       const batch = await nextExploreBatch(12);
-      batch.forEach(appendExploreCard);
+      // Si se cambió de filtro mientras llegaba la respuesta, ese lote ya no vale.
+      if (generation === exploreState.generation) batch.forEach(appendExploreCard);
     } finally {
       exploreState.loading = false;
       setLoadingVisible(false);
     }
+    // En pantallas grandes un lote puede no llenar la vista: sin barra de scroll
+    // nunca llegaría el evento, así que se sigue cargando hasta llenarla.
+    if (needsMore()) loadMoreExplore();
   };
 
   const resetExplore = (tag) => {
+    exploreState.generation++;
     exploreState.tag = tag;
     exploreState.curatedPointer = 0;
     exploreState.curatedOrder = shuffledCurated();
@@ -1087,8 +1100,10 @@
   };
 
   exploreScroll.addEventListener('scroll', () => {
-    const distanceToBottom = exploreScroll.scrollHeight - exploreScroll.scrollTop - exploreScroll.clientHeight;
-    if (distanceToBottom < 500) loadMoreExplore();
+    if (needsMore()) loadMoreExplore();
+  });
+  window.addEventListener('resize', () => {
+    if (needsMore()) loadMoreExplore();
   });
 
   document.getElementById('filterChips').addEventListener('click', (e) => {
@@ -1109,6 +1124,7 @@
     });
     document.getElementById('viewGenerate').classList.toggle('active', tab === 'generate');
     document.getElementById('viewExplore').classList.toggle('active', tab === 'explore');
+    if (tab === 'explore' && needsMore()) loadMoreExplore();
   };
 
   document.querySelectorAll('.tab-btn').forEach((btn) => {
