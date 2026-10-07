@@ -40,7 +40,7 @@ Al ser un único archivo HTML sin dependencias, basta con abrirlo directamente:
 
 ```bash
 # clonar y abrir index.html en el navegador
-git clone https://github.com/HookMike/generador-paletas.git
+git clone https://github.com/miguelAV33/generador-paletas.git
 cd generador-paletas
 # doble clic en index.html, o:
 python3 -m http.server 8000
