@@ -2,9 +2,9 @@
 
 Herramienta web para generar paletas de color armónicas, explorar una galería infinita de paletas y guardar las favoritas. JavaScript puro — sin frameworks, sin dependencias, sin paso de compilación.
 
-**Demo en vivo:** https://tu-dominio.netlify.app/demo-generador-paletas.html
+**Demo en vivo:** https://miguelangel-alonso.netlify.app/demo-generador-paletas.html
 > Al probarlo abriendo `index.html` con doble clic, la pestaña "Explorar" seguirá funcionando igual (es `fetch` normal, no un módulo ES), pero necesitas conexión a internet para ver paletas "en vivo" — sin red, cae automáticamente al generador propio.
-**Más contexto del proyecto:** https://tu-dominio.netlify.app/proyectos/generador-paletas
+**Más contexto del proyecto:** https://miguelangel-alonso.netlify.app/proyectos/generador-paletas
 
 ![Pestaña Generar](./docs/screenshot-generar.png)
 ![Pestaña Explorar](./docs/screenshot-explorar.png)
@@ -54,4 +54,4 @@ La app sigue sin build ni paso de compilación a propósito: todo el JavaScript 
 
 ## Autor
 
-Miguel Ángel Alonso Valhondo — [LinkedIn](https://www.linkedin.com/in/miguelangel-alonso-valhondo) · [Portfolio](https://tu-dominio.netlify.app)
+Miguel Ángel Alonso Valhondo — [LinkedIn](https://www.linkedin.com/in/miguelangel-alonso-valhondo) · [Portfolio](https://miguelangel-alonso.netlify.app)
